@@ -17,7 +17,7 @@ namespace MessageTransit
         private readonly ITransitChannel _channel;
         private readonly IParsingStrategy<T> _parsingStrategy;
         private readonly List<IObserver<T>> _observers;
-        private ConcurrentQueue<T> _messagesQueue;
+        private readonly ConcurrentQueue<T> _messagesQueue;
 
         private readonly object _observersLock = new object();
 
@@ -29,8 +29,8 @@ namespace MessageTransit
         /// <typeparam name="T"></typeparam>
         private class MessageUnsubscriber<T> : IDisposable
         {
-            private List<IObserver<T>> _observers;
-            private IObserver<T> _observer;
+            private readonly List<IObserver<T>> _observers;
+            private readonly IObserver<T> _observer;
             private readonly object _observersLock;
 
 
@@ -63,6 +63,7 @@ namespace MessageTransit
             _channel = channel;
             _parsingStrategy = parsingStrategy;
             _observers = new List<IObserver<T>>();
+            _messagesQueue = new ConcurrentQueue<T>();
 
             // start receiving thread
             Task.Run((Func<Task>) ReceivingTask);
