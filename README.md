@@ -51,9 +51,10 @@ This project should be fully thread-safe for subscribing and receiving messages.
 
 ## Expansion ideas
   
+  * Create new ITransitChannel to handle receiving data from sockets, files or other sources.
   * Notify observers for invalid data that fails parsing
-  * Implement a factory of parsing strategies to handle different message types
-  * Add new ITransitChannel handle receiving data from sockets, files or other sources.
+  * Implement a factory of parsing strategies to handle receiving different message types on the same channel
+  
   
 ## Recommended procedure for running the sample
 1. Download repository from GitHub
