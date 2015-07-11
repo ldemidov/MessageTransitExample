@@ -137,7 +137,7 @@ namespace MessageTransit
                 while (_messagesQueue.TryDequeue(out message))
                 {
                     // notify the observers that a message is available
-                    foreach (var observer in _observers)
+                    foreach (var observer in _observers.ToArray())
                     {
                         observer.OnNext(message);
                     }
