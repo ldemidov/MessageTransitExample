@@ -65,11 +65,16 @@ namespace MessageTransit
             _observers = new List<IObserver<T>>();
             _messagesQueue = new ConcurrentQueue<T>();
 
+            
+        }
+
+        public void StartReceiving()
+        {
             // start receiving thread
-            Task.Run((Func<Task>) ReceivingTask);
+            Task.Run((Func<Task>)ReceivingTask);
 
             // start the publishing thread
-            Task.Run((Action) PublishingTask);
+            Task.Run((Action)PublishingTask);
         }
 
 
@@ -126,7 +131,7 @@ namespace MessageTransit
         /// </summary>
         private void PublishingTask()
         {
-            while (!_stopHandle.WaitOne(300))
+            while (!(_stopHandle.WaitOne(300) && _messagesQueue.IsEmpty))
             {
                 T message;
                 while (_messagesQueue.TryDequeue(out message))
@@ -139,10 +144,14 @@ namespace MessageTransit
                 }
             }
 
-            // notify the observers that the messages are done
-            foreach (var observer in _observers)
+            lock (_observersLock)
             {
-                observer.OnCompleted();
+                // notify the observers that the messages are done
+                foreach (var observer in _observers.ToArray())
+                {
+                    observer.OnCompleted();
+                }
+                _observers.Clear();
             }
         }
 
