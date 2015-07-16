@@ -17,7 +17,7 @@ public interface ITransitChannel
     }
 ```
 
-Then by implementing an IParsingStrategy to convert the binary data into a desired message object, you can create MessageReceiver object using this strategy.  Processing classes that implement the IObserver<T> class can subscribe and receive notifications from this receiver.
+Then by implementing an IParsingStrategy to convert the binary data into a desired message object, you can create MessageReceiver object can be subscribed to.  Processing classes that implement the IObserver<T> class would subscribe and receive notifications from MessageReceiver.
 
 Example implementation.  See the TestApp.MessageTransit project for full example implementation.
 ```
@@ -37,7 +37,7 @@ var sub1 = messageReceiver.Subscribe(messageProcessor1);
 messageReceiver.StartReceiving();
 
 ```
-By default all message publishing is handled by one thread from the thread pool.  Since the MessageReceiver implements IObservable, I recommend using the Reactive Extensions to handle subscriptions and processing message data.  For example, to handle message processing on a new worker thread with Reactive Extensions.
+By default all message publishing is handled by one thread from the thread pool.  Since the MessageReceiver implements IObservable, the use of Microsoft Reactive Extensions is recommended to handle subscriptions and processing the message data.  For example, to handle message processing on a new worker thread:
 
 ```
 messageReceiver
@@ -51,8 +51,10 @@ This project should be fully thread-safe for subscribing and receiving messages.
 
 ## Expansion ideas
   
-  * Create new ITransitChannel to handle receiving data from sockets, files or other sources.
+  * Create new ITransitChannel implementations handle receiving data from sockets, files or other sources.
   * Notify observers for invalid data that fails parsing
+  * Scale number of processing threads based on traffic volume
+  * Pre-allocate memory for Message using an object pool
   * Implement a factory of parsing strategies to handle receiving different message types on the same channel
   
   
